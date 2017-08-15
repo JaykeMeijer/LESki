@@ -1,0 +1,151 @@
+<div class="col-xs-2" id="sidebar">
+    <div class="row">
+        <input type="button" class="btn btn-raised btn-info btn-side"
+                ng-click="new_sequence()"
+                value="New sequence"/>
+    </div>
+    <div class="row">
+        <input type="button" class="btn btn-raised btn-primary btn-side"
+                ng-click="store_file()"
+                value="Store sequence"/>
+    </div>
+    <div class="row">
+        <input type="button" class="btn btn-raised btn-primary btn-side"
+                ng-click="load_file()"
+                value="Load sequence"/>
+    </div>
+    <div class="row" id="sequence_info">
+        <h3>Sequence data</h3>
+        <div class="row">
+            <div class="col-xs-8 field-title">Color saved</div>
+            <div class="col-xs-4 field-content">
+                {{ sequence.color ? 'Yes' : 'No' }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-8 field-title">Number of frames</div>
+            <div class="col-xs-4 field-content">
+                {{ sequence.frames.length }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-8 field-title">Approx file size</div>
+            <div class="col-xs-4 field-content">
+                {{ sequence.color
+                   ? 3 + sequence.frames.length * 305
+                   : 3 + sequence.frames.length * 104 }} B
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-8">
+    <div class="row" id="display">
+        <div class="row">
+            <div class="ski" id="ski_left">
+                <div class="row ledrow">
+                    <div class="led" ng-repeat="led in leds[0]"
+                            ng-style="{background: led.color}"
+                            ng-click="led_clicked(led)">
+                    </div>
+                </div>
+                <div class="row ledrow bottom">
+                    <div class="led" ng-repeat="led in leds[1]"
+                            ng-style="{background: led.color}"
+                            ng-click="led_clicked(led)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="ski" id="ski_right">
+                <div class="row ledrow">
+                    <div class="led" ng-repeat="led in leds[2]"
+                            ng-style="{background: led.color}"
+                            ng-click="led_clicked(led)">
+                    </div>
+                </div>
+                <div class="row ledrow bottom">
+                    <div class="led" ng-repeat="led in leds[3]"
+                            ng-style="{background: led.color}"
+                            ng-click="led_clicked(led)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="sequence_control" align="center">
+        <div class="row">Frame {{ sequence.active_frame + 1 }} / {{ sequence.frames.length }}</div>
+        <div class="row">
+            <button class="btn btn-sm btn-raised"
+                    ng-click="select_frame(0)"
+                    ng-disabled="sequence.frames.length == 1
+                                 || sequence.active_frame == 0">
+                <i class="fa fa-fast-backward"></i>
+            </button>
+            <button class="btn btn-sm btn-raised"
+                    ng-click="select_frame(sequence.active_frame - 1)"
+                    ng-disabled="sequence.frames.length == 1">
+                <i class="fa fa-step-backward"></i>
+            </button>
+            
+            <button class="btn btn-sm btn-raised"
+                    ng-click="toggle_simulate()"
+                    ng-disabled="sequence.frames.length == 1">
+                <i class="fa fa-play" ng-if="!sequence.simulating"></i>
+                <i class="fa fa-stop" ng-if="sequence.simulating"></i>
+            </button>
+
+            <button class="btn btn-sm btn-raised"
+                    ng-click="select_frame(sequence.active_frame + 1)"
+                    ng-disabled="sequence.frames.length == 1">
+                <i class="fa fa-step-forward"></i>
+            </button>
+            <button class="btn btn-sm btn-raised"
+                    ng-disabled="sequence.frames.length == 1
+                                 || sequence.active_frame == sequence.frames.length - 1"
+                    ng-click="select_frame(sequence.frames.length - 1)">
+                <i class="fa fa-fast-forward"></i>
+            </button>
+        </div>
+        <div class="row">
+            <button class="btn btn-sm btn-raised"
+                    ng-click="create_new_frame(sequence.active_frame + 1, leds)">
+                Add frame
+            </button>
+            <button class="btn btn-sm btn-raised"
+                    ng-click="remove_frame(sequence.active_frame)"
+                    ng-disabled="sequence.frames.length <= 1">
+                Delete frame
+            </button>
+        </div>
+        <div class="row">
+            <h3>Simulation control</h3>
+            
+            <label>Step duration</label>
+            <input type="number" ng-model="sequence.steptime"> ms
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-2">
+    <div class="row" ng-if="sequence.color">
+        <input type="color" ng-model="ac.active_color" ng-change="color_update()">
+    </div>
+    <div class="row" ng-if="!sequence.color">
+        <button class="btn btn-xs btn-raised btn-primary">On</button>
+        <button class="btn btn-xs btn-raised btn-primary">Off</button>
+    </div>
+
+    <div class="row">
+        <button class="btn btn-sm btn-raised btn-primary"
+                ng-click="apply_all(ac.active_color)">
+            Apply to all
+        </button>
+        <button class="btn btn-sm btn-raised btn-primary"
+                ng-click="apply_all('#000000')">
+            Clear all
+        </button>
+    </div>
+</div>

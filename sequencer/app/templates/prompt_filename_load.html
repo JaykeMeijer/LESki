@@ -1,0 +1,11 @@
+<div class="well">
+    Filename: <input type="text" ng-model="filename">
+    <div class="row" align="right" style="padding-right: 20px;bottom: 0px;">
+        <input type="button" class="btn btn-raised btn-danger"
+                ng-click="closeThisDialog()"
+                value="Cancel"/>
+        <input type="button" class="btn btn-raised btn-primary"
+                ng-click="closeThisDialog(read_file(filename))"
+                value="Load"/>
+    </div>
+</div>
