@@ -1,6 +1,12 @@
 body {
     font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
     font-weight: 300;
+    color: #ffffff;
+    background-color: #222222;
+}
+
+input {
+    color: black;
 }
 
 #app_loading {

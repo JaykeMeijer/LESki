@@ -173,7 +173,7 @@
                 Delete frame
             </button>
         </div>
-        <hr />
+        <br />
         <div class="row">
             <h3>Simulation control</h3>
             
@@ -185,6 +185,8 @@
 
 <div class="col-xs-2">
     <div class="row" ng-show="sequence.color">
+        <br />
+        Select color:
         <input type="color" ng-model="ac.active_color" ng-change="color_update()">
     </div>
     <div class="row" ng-show="!sequence.color">
@@ -194,12 +196,24 @@
             <span id="brightness"></span>%
         </div>
         <button class="btn btn-xs btn-raised btn-primary"
-                ng-click="set_percentage(100)">
-            Full
+                 ng-click="set_percentage(0)">
+            0%
         </button>
         <button class="btn btn-xs btn-raised btn-primary"
-                 ng-click="set_percentage(0)">
-            Off
+                ng-click="set_percentage(25)">
+            25%
+        </button>
+        <button class="btn btn-xs btn-raised btn-primary"
+                ng-click="set_percentage(50)">
+            50%
+        </button>
+        <button class="btn btn-xs btn-raised btn-primary"
+                ng-click="set_percentage(75)">
+            75%
+        </button>
+        <button class="btn btn-xs btn-raised btn-primary"
+                ng-click="set_percentage(100)">
+            100%
         </button>
     </div>
 
