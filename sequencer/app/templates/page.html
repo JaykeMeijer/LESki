@@ -44,28 +44,35 @@
         <div class="row">
             <div class="ski" id="ski_left">
                 <div class="row ledrow top">
-                    <div class="row-select arrow" ng-click="select_row(0)">
-                        <i class="fa fa-long-arrow-right"></i>
+                    <div class="row-select arrow" ng-click="select_row(0)"
+                            ng-right-click="select_row(0, true)">
+                        <i class="fa fa-long-arrow-right"
+                            ng-show="!sequence.simulating"></i>
                     </div>
                     <div class="led-container" ng-repeat="led in leds[0]"
-                            ng-click="led_clicked(led)">
+                            ng-click="led_clicked(led)"
+                            ng-right-click="led_clicked(led, true)">
                         <div class="led" ng-style="{background: led.color}"></div>
                     </div>
                 </div>
-                <div class="row ledrow middle">
+                <div class="row ledrow middle" ng-show="!sequence.simulating">
                     <div class="row-select">
                     </div>
                     <div class="select-arrow arrow" ng-repeat="i in [] | range: leds[0].length"
-                            ng-click="multi_led_clicked([leds[0][$index], leds[1][$index]])">
+                            ng-click="multi_led_clicked([leds[0][$index], leds[1][$index]])"
+                            ng-right-click="multi_led_clicked([leds[0][$index], leds[1][$index]], true)">
                         <i class="fa fa-arrows-v"></i>
                     </div>
                 </div>
                 <div class="row ledrow bottom">
-                    <div class="row-select arrow" ng-click="select_row(1)">
-                        <i class="fa fa-long-arrow-right"></i>
+                    <div class="row-select arrow" ng-click="select_row(1)"
+                            ng-right-click="select_row(1, true)">
+                        <i class="fa fa-long-arrow-right"
+                            ng-show="!sequence.simulating"></i>
                     </div>
                     <div class="led-container" ng-repeat="led in leds[1]"
-                            ng-click="led_clicked(led)">
+                            ng-click="led_clicked(led)"
+                            ng-right-click="led_clicked(led, true)">
                         <div class="led" ng-style="{background: led.color}"></div>
                     </div>
                 </div>
@@ -75,28 +82,36 @@
         <div class="row">
             <div class="ski" id="ski_right">
                 <div class="row ledrow top">
-                    <div class="row-select arrow" ng-click="select_row(2)">
-                        <i class="fa fa-long-arrow-right"></i>
+                    <div class="row-select arrow" ng-click="select_row(2)"
+                            ng-right-click="select_row(2, true)">
+                        <i class="fa fa-long-arrow-right"
+                            ng-show="!sequence.simulating"></i>
                     </div>
                     <div class="led-container" ng-repeat="led in leds[2]"
-                            ng-click="led_clicked(led)">
+                            ng-click="led_clicked(led)"
+                            ng-right-click="led_clicked(led, true)">
                         <div class="led" ng-style="{background: led.color}"></div>
                     </div>
                 </div>
-                <div class="row ledrow middle">
+                <div class="row ledrow middle"
+                        ng-show="!sequence.simulating">
                     <div class="row-select">
                     </div>
                     <div class="select-arrow arrow" ng-repeat="i in [] | range: leds[0].length"
-                            ng-click="multi_led_clicked([leds[2][$index], leds[3][$index]])">
+                            ng-click="multi_led_clicked([leds[2][$index], leds[3][$index]])"
+                            ng-right-click="multi_led_clicked([leds[2][$index], leds[3][$index]], true)">
                         <i class="fa fa-arrows-v"></i>
                     </div>
                 </div>
                 <div class="row ledrow bottom">
-                    <div class="row-select arrow" ng-click="select_row(3)">
-                        <i class="fa fa-long-arrow-right"></i>
+                    <div class="row-select arrow" ng-click="select_row(3)"
+                            ng-right-click="select_row(3, true)">
+                        <i class="fa fa-long-arrow-right"
+                            ng-show="!sequence.simulating"></i>
                     </div>
                     <div class="led-container" ng-repeat="led in leds[3]"
-                            ng-click="led_clicked(led)">
+                            ng-click="led_clicked(led)"
+                            ng-right-click="led_clicked(led, true)">
                         <div class="led" ng-style="{background: led.color}"></div>
                     </div>
                 </div>
@@ -105,8 +120,10 @@
         <div class="row arrowrow">
             <div class="select-arrow arrow" ng-repeat="i in [] | range: leds[0].length"
                     ng-click="multi_led_clicked([leds[0][$index], leds[1][$index],
-                                                leds[2][$index], leds[3][$index]])">
-                <i class="fa fa-long-arrow-up"></i>
+                                                leds[2][$index], leds[3][$index]])"
+                    ng-right-click="multi_led_clicked([leds[0][$index], leds[1][$index],
+                                                       leds[2][$index], leds[3][$index]], true)">
+                <i class="fa fa-long-arrow-up" ng-show="!sequence.simulating"></i>
             </div>
         </div>
     </div>
@@ -189,12 +206,9 @@
     <hr />
     <div class="row">
         <button class="btn btn-sm btn-raised btn-primary"
-                ng-click="apply_all(ac.active_color)">
+                ng-click="apply_all()"
+                ng-right-click="apply_all(true)">
             Apply to all
-        </button>
-        <button class="btn btn-sm btn-raised btn-primary"
-                ng-click="apply_all('#000000')">
-            Clear all
         </button>
     </div>
 </div>

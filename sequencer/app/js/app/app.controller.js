@@ -1,3 +1,15 @@
+app.directive('ngRightClick', function($parse) {
+    return function(scope, element, attrs) {
+        var fn = $parse(attrs.ngRightClick);
+        element.bind('contextmenu', function(event) {
+            scope.$apply(function() {
+                event.preventDefault();
+                fn(scope, {$event:event});
+            });
+        });
+    };
+});
+
 app.controller('AppController', function AppController($scope, $timeout, ngDialog) {
     var ac = this;
     ac.loaded = false;
@@ -64,6 +76,16 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
                     if ($scope.sequence.frames.length > 1) {
                         $scope.remove_frame($scope.sequence.active_frame);
                     }
+                    break;
+                case 13:
+                case 32:
+                    $scope.toggle_simulate();
+                    break;
+                case 38:
+                    $scope.sequence.steptime += 10;
+                    break;
+                case 40:
+                    $scope.sequence.steptime -= 10;
                     break;
             }
             $timeout();
@@ -324,26 +346,30 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         $timeout(ac.percentage);
     }
 
-    $scope.led_clicked = function(led) {
-        led.color = ac.active_color;
+    $scope.led_clicked = function(led, right=false) {
+        if (right) {
+            led.color = "#000000";
+        } else {
+            led.color = ac.active_color;
+        }
     }
 
-    $scope.multi_led_clicked = function(leds) {
+    $scope.multi_led_clicked = function(leds, right=false) {
         for (var i = 0; i < leds.length; i++) {
-            $scope.led_clicked(leds[i]);
+            $scope.led_clicked(leds[i], right);
         }
     }
 
-    $scope.select_row = function(rownr) {
+    $scope.select_row = function(rownr, right=false) {
         for (var i = 0; i < $scope.leds[rownr].length; i++) {
-            $scope.led_clicked($scope.leds[rownr][i]);
+            $scope.led_clicked($scope.leds[rownr][i], right);
         }
     }
 
-    $scope.apply_all = function(color) {
+    $scope.apply_all = function(right=false) {
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 25; j++) {
-                $scope.leds[i][j].color = color;
+                $scope.led_clicked($scope.leds[i][j], right);
             }
         }
     }
