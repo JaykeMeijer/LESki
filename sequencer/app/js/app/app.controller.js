@@ -247,6 +247,18 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         led.color = ac.active_color;
     }
 
+    $scope.multi_led_clicked = function(leds) {
+        for (var i = 0; i < leds.length; i++) {
+            $scope.led_clicked(leds[i]);
+        }
+    }
+
+    $scope.select_row = function(rownr) {
+        for (var i = 0; i < $scope.leds[rownr].length; i++) {
+            $scope.led_clicked($scope.leds[rownr][i]);
+        }
+    }
+
     $scope.apply_all = function(color) {
         for (var i = 0; i < 4; i++) {
             for (var j = 0; j < 25; j++) {

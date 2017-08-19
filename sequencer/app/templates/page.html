@@ -43,16 +43,30 @@
     <div class="row" id="display">
         <div class="row">
             <div class="ski" id="ski_left">
-                <div class="row ledrow">
-                    <div class="led" ng-repeat="led in leds[0]"
-                            ng-style="{background: led.color}"
+                <div class="row ledrow top">
+                    <div class="row-select arrow" ng-click="select_row(0)">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="led-container" ng-repeat="led in leds[0]"
                             ng-click="led_clicked(led)">
+                        <div class="led" ng-style="{background: led.color}"></div>
+                    </div>
+                </div>
+                <div class="row ledrow middle">
+                    <div class="row-select">
+                    </div>
+                    <div class="select-arrow arrow" ng-repeat="i in [] | range: leds[0].length"
+                            ng-click="multi_led_clicked([leds[0][$index], leds[1][$index]])">
+                        <i class="fa fa-arrows-v"></i>
                     </div>
                 </div>
                 <div class="row ledrow bottom">
-                    <div class="led" ng-repeat="led in leds[1]"
-                            ng-style="{background: led.color}"
+                    <div class="row-select arrow" ng-click="select_row(1)">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="led-container" ng-repeat="led in leds[1]"
                             ng-click="led_clicked(led)">
+                        <div class="led" ng-style="{background: led.color}"></div>
                     </div>
                 </div>
             </div>
@@ -60,21 +74,43 @@
 
         <div class="row">
             <div class="ski" id="ski_right">
-                <div class="row ledrow">
-                    <div class="led" ng-repeat="led in leds[2]"
-                            ng-style="{background: led.color}"
+                <div class="row ledrow top">
+                    <div class="row-select arrow" ng-click="select_row(2)">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="led-container" ng-repeat="led in leds[2]"
                             ng-click="led_clicked(led)">
+                        <div class="led" ng-style="{background: led.color}"></div>
+                    </div>
+                </div>
+                <div class="row ledrow middle">
+                    <div class="row-select">
+                    </div>
+                    <div class="select-arrow arrow" ng-repeat="i in [] | range: leds[0].length"
+                            ng-click="multi_led_clicked([leds[2][$index], leds[3][$index]])">
+                        <i class="fa fa-arrows-v"></i>
                     </div>
                 </div>
                 <div class="row ledrow bottom">
-                    <div class="led" ng-repeat="led in leds[3]"
-                            ng-style="{background: led.color}"
+                    <div class="row-select arrow" ng-click="select_row(3)">
+                        <i class="fa fa-long-arrow-right"></i>
+                    </div>
+                    <div class="led-container" ng-repeat="led in leds[3]"
                             ng-click="led_clicked(led)">
+                        <div class="led" ng-style="{background: led.color}"></div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row arrowrow">
+            <div class="select-arrow arrow" ng-repeat="i in [] | range: leds[0].length"
+                    ng-click="multi_led_clicked([leds[0][$index], leds[1][$index],
+                                                leds[2][$index], leds[3][$index]])">
+                <i class="fa fa-long-arrow-up"></i>
+            </div>
+        </div>
     </div>
+
     <div class="row" id="sequence_control" align="center">
         <div class="row">Frame {{ sequence.active_frame + 1 }} / {{ sequence.frames.length }}</div>
         <div class="row">

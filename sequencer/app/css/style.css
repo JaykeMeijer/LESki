@@ -35,31 +35,85 @@ body {
 }
 
 .ski {
-    background-image: url('../static/images/ski_base_transparent.png');
-    background-size: contain;
+    /*background-image: url('../static/images/ski_base_transparent.png');
+    background-size: contain;*/
     width: 923px;
-    height: 62px;
+    height: 75px;
     margin: 20px;
-    background-repeat: no-repeat;
+    margin-left: 26px;
+    background-color: #666;
     position: relative;
+    border-top-right-radius: 31px;
+    border-bottom-right-radius: 31px;
+}
+
+.led-container {
+    width: 35px;
+    height: 35px;
+    padding-top: 12px;
+    padding-left: 12px;
+    cursor: pointer;
+    float: left;
+}
+
+.led-container:hover .led {
+    border-color: white;
 }
 
 .led {
     width: 10px;
     height: 10px;
     border: 1px solid black;
+}
+
+.select-arrow {
+    width: 35px;
+    height: 25px;
+    font-size: 19px;
+    text-align: center;
+    cursor: pointer;
     float: left;
-    margin-right: 25px;
-    cursor: pointer;s
+}
+
+.arrow {
+    color: #000000;
+}
+
+.arrow:hover {
+    color: #AAAAAA;
 }
 
 .ledrow {
     margin-left: 0px;
     margin-right: 0px;
     padding-left: 10px;
+    position: absolute;
+}
+
+.ledrow.top {
+    top: -12px;
+}
+
+.ledrow.middle {
+    top: 25px;
 }
 
 .ledrow.bottom {
-    position: absolute;
-    bottom: 0;
+    bottom: -12px;
+}
+
+.arrowrow {
+    top: -9px;
+    margin-left: 19px;
+    margin-right: 0px;
+    padding-left: 10px;
+    position: relative;
+}
+
+.row-select {
+    height: 25px;
+    width: 14px;
+    margin-left: -6px;
+    padding-top: 7px;
+    float: left;
 }
