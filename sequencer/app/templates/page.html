@@ -156,6 +156,7 @@
                 Delete frame
             </button>
         </div>
+        <hr />
         <div class="row">
             <h3>Simulation control</h3>
             
@@ -166,14 +167,26 @@
 </div>
 
 <div class="col-xs-2">
-    <div class="row" ng-if="sequence.color">
+    <div class="row" ng-show="sequence.color">
         <input type="color" ng-model="ac.active_color" ng-change="color_update()">
     </div>
-    <div class="row" ng-if="!sequence.color">
-        <button class="btn btn-xs btn-raised btn-primary">On</button>
-        <button class="btn btn-xs btn-raised btn-primary">Off</button>
+    <div class="row" ng-show="!sequence.color">
+        <div class="row">
+            Brightness:
+            <div class="slider shor" id="brightness_slider" ng-init="initSlider()"></div>
+            <span id="brightness"></span>%
+        </div>
+        <button class="btn btn-xs btn-raised btn-primary"
+                ng-click="set_percentage(100)">
+            Full
+        </button>
+        <button class="btn btn-xs btn-raised btn-primary"
+                 ng-click="set_percentage(0)">
+            Off
+        </button>
     </div>
 
+    <hr />
     <div class="row">
         <button class="btn btn-sm btn-raised btn-primary"
                 ng-click="apply_all(ac.active_color)">

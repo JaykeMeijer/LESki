@@ -3,22 +3,72 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
     ac.loaded = false;
 
     $scope.leds = [[], [] ,[] ,[]];
-    ac.active_color = "#ff0000"
+    ac.active_color = "#ffffff"
+    ac.percentage = 100;
 
-    function new_sequence() {
+    $scope.new_sequence = function() {
+        $scope.new_color_mode = true;
+        var dialog = ngDialog.open({
+            template: "templates/new_sequence.html",
+            className: 'ngdialog-theme-default',
+            scope: $scope
+        });
+    }
+
+    $scope.create_new_sequence = function(colormode) {
+        new_sequence(colormode);
+        if (!colormode) {
+            ac.active_color = "#ffffff";
+        }
+        $scope.create_new_frame(0);
+    }
+
+    function new_sequence(colormode) {
         $scope.sequence = {
-            color: true,
+            color: colormode,
             simulating: false,
             frames: [],
             active_frame: 0,
             steptime: 1000
         };
     }
-    new_sequence();
 
     function init() {
         // Initialize the application
         var awaiting = 0;
+
+        // Set key commands
+        $(document).keydown(function(e) {
+            if ($(e.target).closest("input")[0]) {
+                return;
+            }
+            console.log(e.keyCode)
+            switch(e.keyCode) {
+                case 37:
+                    if ($scope.sequence.frames.length > 1) {
+                        $scope.select_frame($scope.sequence.active_frame - 1);
+                    }
+                    break;
+                case 39:
+                    if ($scope.sequence.frames.length > 1) {
+                        $scope.select_frame($scope.sequence.active_frame + 1);
+                    }
+                    break;
+                case 107:
+                case 187:
+                    $scope.create_new_frame($scope.sequence.active_frame + 1, $scope.leds);
+                    break;
+                case 109:
+                case 189:
+                case 46:
+                    if ($scope.sequence.frames.length > 1) {
+                        $scope.remove_frame($scope.sequence.active_frame);
+                    }
+                    break;
+            }
+            $timeout();
+        });
+
         callback();
 
         function callback() {
@@ -29,6 +79,25 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         }
     }
     init();
+
+    $scope.initSlider = function() {
+        var el = document.getElementById('brightness_slider');
+        var el2 = document.getElementById('brightness');
+        ac.slider = noUiSlider.create(el, {
+            start: [100],
+            step: 1,
+            range: {
+                'min': [0],
+                'max': [100]
+            }
+        });
+        ac.slider.on('change', function(){
+            $scope.set_percentage(ac.slider.get());
+        });
+        ac.slider.on('update', function( values, handle ) {
+            el2.innerHTML = Math.round(values[handle]);
+        });
+    }
 
     $scope.store_file = function() {
         var dialog = ngDialog.open({
@@ -74,6 +143,8 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         size = 3; // Metadata
         if ($scope.sequence.color) {
             size += $scope.sequence.frames.length * (rows * (leds * 3 + 1) + 1);
+        } else {
+            size += $scope.sequence.frames.length * (rows * (leds + 1) + 1);
         }
         console.log(size);
 
@@ -89,17 +160,17 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
             for (var j = 0; j < frame.length; j++) {
                 var row = frame[j];
                 for (var k = 0; k < row.length; k++) {
+                    val = htmlToRGB(row[k].color)
                     if ($scope.sequence.color) {
-                        val = htmlToRGB(row[k].color)
                         writeByte(val.r);
                         writeByte(val.g);
                         writeByte(val.b);
                     } else {
-                        writeByte(1);
+                        writeByte(val.r);
                     }
                     
                 }
-                writeByte(11);
+                writeByte(11); // \t
             }
             writeByte(10); // \n
         }
@@ -136,8 +207,6 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
             b = readByte();
         }
 
-        console.log($scope.sequence);
-
         // Now real data starts
         b = readByte();
         var framepointer = 0;
@@ -160,7 +229,7 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
                         var rgb_b = readByte();
                         row[ledpointer] = {color: rgbToHex(rgb_r, rgb_b, rgb_g)};
                     } else {
-                        row[ledpointer] = b;
+                        row[ledpointer] = {color: rgbToHex(b, b, b)};
                     }
                     ledpointer++;
                     b = readByte();
@@ -241,7 +310,19 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         $scope.leds = $scope.sequence.frames[frame_id];
         $scope.sequence.active_frame = frame_id;
     }
-    $scope.create_new_frame(0);
+
+    $scope.set_percentage = function(percentage) {
+        ac.percentage = Math.round(percentage);
+        ac.slider.set(ac.percentage);
+        val = 255 * (ac.percentage / 100);
+        val = Math.round(val);
+        hex = val.toString(16);
+        if (hex.length == 1) {
+            hex = '0' + hex;
+        }
+        ac.active_color = '#' + hex + hex + hex;
+        $timeout(ac.percentage);
+    }
 
     $scope.led_clicked = function(led) {
         led.color = ac.active_color;
@@ -287,4 +368,5 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         window.close();
     }
 
+    $scope.create_new_sequence(true);
 });

@@ -25,6 +25,24 @@ body {
     padding-right: 30px;
 }
 
+#brightness_slider {
+    width: 80%;
+}
+
+.btn:focus{
+    outline: none !important;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+h3 {
+    margin-top: 0px;
+}
+
+.restore_margin {
+    margin-left: 0px;
+}
+
 .btn-side {
     width: 100%;
 }
