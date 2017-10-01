@@ -59,9 +59,7 @@ h3 {
 }
 
 .ski {
-    /*background-image: url('../static/images/ski_base_transparent.png');
-    background-size: contain;*/
-    width: 923px;
+    width: 1200px;
     height: 75px;
     margin: 20px;
     margin-left: 26px;
@@ -72,10 +70,10 @@ h3 {
 }
 
 .led-container {
-    width: 35px;
+    width: 23px;
     height: 35px;
     padding-top: 12px;
-    padding-left: 12px;
+    padding-left: 7px;
     cursor: pointer;
     float: left;
 }
@@ -91,7 +89,7 @@ h3 {
 }
 
 .select-arrow {
-    width: 35px;
+    width: 23px;
     height: 25px;
     font-size: 19px;
     text-align: center;

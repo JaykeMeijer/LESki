@@ -15,6 +15,8 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
     ac.loaded = false;
 
     $scope.leds = [[], [] ,[] ,[]];
+    $scope.NR_PIXELS = 50;
+    $scope.NR_STRANDS = 4;
     ac.active_color = "#ffffff"
     ac.percentage = 100;
 
@@ -139,34 +141,32 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
 
     $scope.write_file = function(filename) {
         /* Data model:
-        * <colormode><number of frames>\n
-        * <frame>\n
-        * <frame>\n
-        * <frame>\n
-        * 
+        * <colormode><number of frames><number of strands><number of pixels per strand>\n
+        * <frame><frame><frame>
+        *
         * Frame for color mode:
-        * <row1-led1-R><row1-led1-G><row1-led1-B><row1-led2-R>...<row1-led25-G><row1-led25-B>\t
-        * <row2-led1-R><row2-led1-G><row2-led1-B><row2-led2-R>...<row2-led25-G><row2-led25-B>\t
+        * <row1-led1-R><row1-led1-G><row1-led1-B><row1-led2-R>...<row1-ledX-G><row1-ledX-B>
+        * <row2-led1-R><row2-led1-G><row2-led1-B><row2-led2-R>...<row2-ledX-G><row2-ledX-B>
         * etc.
         * 
         * Frame for non-color mode:
-        * <row1-led1><row1-led2>...<row1-led25>\t
-        * <row1-led1><row1-led2>...<row1-led25>\t
-        * <row1-led1><row1-led2>...<row1-led25>\t
+        * <row1-led1><row1-led2>...<row1-ledX>
+        * <row1-led1><row1-led2>...<row1-ledX>
+        * <row1-led1><row1-led2>...<row1-ledX>
         */
 
         // Determine required size
         // rows per frame:
-        var rows = 4;
+        var rows = $scope.NR_STRANDS;
 
         // LEDS per row
-        var leds = 25;
+        var leds = $scope.NR_PIXELS;
 
-        size = 3; // Metadata
+        size = 5; // Metadata
         if ($scope.sequence.color) {
-            size += $scope.sequence.frames.length * (rows * (leds * 3 + 1) + 1);
+            size += $scope.sequence.frames.length * (rows * (leds * 3));
         } else {
-            size += $scope.sequence.frames.length * (rows * (leds + 1) + 1);
+            size += $scope.sequence.frames.length * (rows * leds);
         }
         console.log(size);
 
@@ -175,6 +175,8 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         datapointer = 0;
         writeByte($scope.sequence.color ? 1 : 0);
         writeByte($scope.sequence.frames.length);
+        writeByte(rows);
+        writeByte(leds);
         writeByte(10);
 
         for (var i = 0; i < $scope.sequence.frames.length; i++) {
@@ -192,9 +194,7 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
                     }
                     
                 }
-                writeByte(11); // \t
             }
-            writeByte(10); // \n
         }
         
         var fs = require('fs');
@@ -219,7 +219,12 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
 
         // Parse metadata
         $scope.sequence.color = (readByte() == 1);
-        console.log('Sequence contains ' + readByte() + ' frames');
+        var frames = readByte();
+        var rows = readByte();
+        var pixels = readByte();
+        console.log('Sequence contains ' + frames + ' frames');
+        console.log('Frame contains ' + rows + ' rows');
+        console.log('Row contains ' + pixels + ' pixels');
         $scope.sequence.frames = [];
         
         // Ensure metadata is finished
@@ -230,40 +235,32 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         }
 
         // Now real data starts
-        b = readByte();
-        var framepointer = 0;
-        while (b != undefined) {
+        for (var i = 0; i < frames; i++) {
             // Add new frame
             $scope.sequence.frames.push([]);
 
-            var frame = $scope.sequence.frames[framepointer];
-            var rowpointer = 0;
-            while (b != 10) {
+            var frame = $scope.sequence.frames[i];
+            for (var j = 0; j < rows; j++) {
                 // Add new row
                 frame.push([]);
-                var row = frame[rowpointer];
-                var ledpointer = 0;
-                while (b != 11) {
-                    row.push([])
+                var row = frame[j];
+                for (var k = 0; k < pixels; k++) {
+                    row.push({});
                     if ($scope.sequence.color) {
-                        var rgb_r = b;
+                        var rgb_r = readByte();
                         var rgb_g = readByte();
                         var rgb_b = readByte();
-                        row[ledpointer] = {color: rgbToHex(rgb_r, rgb_b, rgb_g)};
+                        row[k] = {color: rgbToHex(rgb_r, rgb_b, rgb_g)};
+                        console.log(j + ': ' + row[k].color)
                     } else {
-                        row[ledpointer] = {color: rgbToHex(b, b, b)};
+                        var p = readByte();
+                        row[k] = {color: rgbToHex(p, p, p)};
                     }
-                    ledpointer++;
-                    b = readByte();
                 }
-                // New row starting now
-                rowpointer++;
-                b = readByte();
             }
-            // New frame starting now
-            framepointer++;
-            b = readByte();
         }
+
+        console.log($scope.sequence)
 
         // Load complete, update screen
         $scope.select_frame(0);
@@ -303,8 +300,8 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
 
         frame = $scope.sequence.frames[position];
 
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 25; j++) {
+        for (var i = 0; i < $scope.NR_STRANDS; i++) {
+            for (var j = 0; j < $scope.NR_PIXELS; j++) {
                 if (based_on !== undefined) {
                     frame[i][j] = {color: based_on[i][j].color};
                 } else {
@@ -367,8 +364,8 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
     }
 
     $scope.apply_all = function(right=false) {
-        for (var i = 0; i < 4; i++) {
-            for (var j = 0; j < 25; j++) {
+        for (var i = 0; i < $scope.NR_STRANDS; i++) {
+            for (var j = 0; j < $scope.NR_PIXELS; j++) {
                 $scope.led_clicked($scope.leds[i][j], right);
             }
         }
