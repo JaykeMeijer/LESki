@@ -1,0 +1,87 @@
+<html>
+    <head>
+        <title>FileBrowser</title>
+        <style>
+            .del {
+                cursor: pointer;
+            }
+
+            .del:hover {
+                color: red;
+            }
+        </style>
+    </head>
+
+    <body onload="list();">
+        <h1>LESki File Browser</h1>
+        <p>
+            <form enctype="multipart/form-data" action="/edit" method="post">
+                <input id="newfile" type="file" />
+                <input type=button onclick="upload()" value="Upload" />
+            </form>
+        </p>
+        <p>
+            <table id="fl"></table>
+        </p>
+    </body>
+
+    <script>
+        function list() {
+            document.getElementById('fl').innerHTML = "";
+            doReq('/list?dir=/', "GET", null, h_list);
+        }
+
+        function doReq(url, method, data, callback) {
+            var x = new XMLHttpRequest();
+
+            x.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    callback(this.responseText);
+                }
+            };
+            x.open(method, url, true);
+            if (method == "GET") {
+                x.send();
+            } else {
+                x.send(data);
+            }
+        }
+
+        function h_list(d) {
+            r = JSON.parse(d);
+            s = '<tr><th>Name</th><th>Size</th><th>Delete</th></tr>';
+            for (var i = 0; i < r.length; i++) {
+                s += '<tr><td>' + r[i].name + '</td><td>' + r[i].size + '</td><td class="del" onclick="del(\'/' + r[i].name + '\');">Delete</td></tr>';
+            }
+            document.getElementById('fl').innerHTML = s;
+        }
+
+        function upload() {
+            var fileSelect = document.getElementById('newfile');
+            var files = fileSelect.files;
+            var formData = new FormData();
+            // Loop through each of the selected files.
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+
+                // Add the file to the request.
+                formData.append("data", file, file.name);
+                break;
+            }
+
+            doReq("/edit", "POST", formData, h_upload);
+        }
+
+        function h_upload(data) {
+            setTimeout(list, 50);
+        }
+
+        function del(filename) {
+            if (confirm("Are you sure you want to delete " + filename + "?")) {
+                var formData = new FormData();
+                formData.append("path", filename);
+                doReq("/edit", "DELETE", formData, h_upload);
+            }
+        }
+    </script>
+</html>

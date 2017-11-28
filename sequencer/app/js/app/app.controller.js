@@ -198,7 +198,7 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
         }
         
         var fs = require('fs');
-        fs.writeFileSync("sequences/" + filename, data);
+        fs.writeFileSync("sequences/" + filename + '.seq', data);
 
         function writeByte(byte) {
             data[datapointer] = byte;
@@ -209,7 +209,7 @@ app.controller('AppController', function AppController($scope, $timeout, ngDialo
     $scope.read_file = function(filename) {
         var fs = require('fs');
         try {
-            data = fs.readFileSync("sequences/" + filename);
+            data = fs.readFileSync("sequences/" + filename + '.seq');
         } catch (err) {
             alert('Failed to read that file');
             return;
